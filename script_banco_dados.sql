@@ -80,6 +80,32 @@ CREATE TABLE IF NOT EXISTS agenda_fisioterapeuta (
 );
 
 -- -----------------------------------------------------
+-- Tabela: disponibilidade_fisioterapeuta
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS disponibilidade_fisioterapeuta (
+  id_disponibilidade INT PRIMARY KEY AUTO_INCREMENT, -- Identificador único do registro
+  fk_fisioterapeuta INT NOT NULL,  -- Foreign key para vincular fisioterapeuta
+  fk_clinica INT NOT NULL,  -- Foreign key para vincular clinica
+  data_disponivel DATE NOT NULL, -- Data que estará disponivel para agendamento
+  hora_inicio TIME NOT NULL, -- Horário de início
+  hora_fim TIME NOT NULL, -- Horário de fim
+  CONSTRAINT fk_disp_fisio FOREIGN KEY (fk_fisioterapeuta) REFERENCES fisioterapeuta(id_fisioterapeuta),
+  CONSTRAINT fk_disp_clinica FOREIGN KEY (fk_clinica) REFERENCES clinica(id_clinica)
+);
+
+-- -----------------------------------------------------
+-- Tabela: bloqueio_agenda
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS bloqueio_agenda (
+  id_bloqueio INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único do registro
+  fk_fisioterapeuta INT NOT NULL, -- Foreign key para vincular fisioterapeuta
+  data_inicio TIMESTAMP NOT NULL, -- Horário de início
+  data_fim TIMESTAMP NOT NULL, -- Horário de fim
+  dia_inteiro TINYINT NOT NULL DEFAULT 1, -- 1 = Sim, 0 = Não
+  tipo_bloqueio VARCHAR(45) NOT NULL,    -- Ex: 'FOLGA', 'FERIAS', 'COMPROMISSO'
+  CONSTRAINT fk_bloqueio_fisio FOREIGN KEY (fk_fisioterapeuta) REFERENCES fisioterapeuta(id_fisioterapeuta)
+);
+-- -----------------------------------------------------
 -- Tabela: clinica
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS clinica (
@@ -103,6 +129,7 @@ CREATE TABLE IF NOT EXISTS agendamento (
   data_agendamento DATE NOT NULL, -- Data do agendamento
   hora_inicio TIME NOT NULL, -- Horário de início
   hora_fim TIME NOT NULL, -- Horário de término
+  tipo_atendimento VARCHAR(20) NOT NULL, -- Ex: avulsa , pacote, recovery
   status_agendamento TINYINT NOT NULL, -- Status do agendamento
   observacao VARCHAR(255) NULL, -- Informações complementares
   CONSTRAINT fk_agendamento_clinica FOREIGN KEY (fk_clinica) REFERENCES clinica (id_clinica),
@@ -128,7 +155,7 @@ CREATE TABLE IF NOT EXISTS sessao (
   id_sessao INT PRIMARY KEY AUTO_INCREMENT, -- Identificador único da sessão realizada
   fk_agendamento INT NOT NULL, -- Agendamento que originou a sessão
   fk_servico INT NOT NULL, -- Serviço realizado na sessão
-  data_sessao DATETIME NOT NULL, -- Data e hora da sessão
+  data_sessao TIMESTAMP NOT NULL, -- Data e hora da sessão
   descricao VARCHAR(255) NOT NULL, -- Descrição das atividades realizadas
   observacao VARCHAR(255) NOT NULL, -- Observações da sessão
   CONSTRAINT fk_sessao_agendamento FOREIGN KEY (fk_agendamento) REFERENCES agendamento (id_agendamento),
@@ -171,11 +198,9 @@ CREATE TABLE IF NOT EXISTS pagamento (
     valor DECIMAL(10,2), -- Valor cobrado pelo serviço
     forma_pagamento VARCHAR(45), -- Meio utilizado para realizar o pagamento
     status_pagamento TINYINT, -- Situação atual do pagamento
-    data_concluida VARCHAR(45), -- Data em que o pagamento foi concluído
-    CONSTRAINT fk_pagamento_paciente
-        FOREIGN KEY (fk_paciente) REFERENCES paciente(id_paciente),
-    CONSTRAINT fk_pagamento_servico
-        FOREIGN KEY (fk_servico) REFERENCES servico(id_servico)
+    data_concluida TIMESTAMP NOT NULL, -- Data em que o pagamento foi concluído
+    CONSTRAINT fk_pagamento_paciente FOREIGN KEY (fk_paciente) REFERENCES paciente(id_paciente),
+    CONSTRAINT fk_pagamento_servico FOREIGN KEY (fk_servico) REFERENCES servico(id_servico)
 );
 
 -- -----------------------------------------------------
