@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS bloqueio_agenda (
   tipo_bloqueio VARCHAR(45) NOT NULL,    -- Ex: 'FOLGA', 'FERIAS', 'COMPROMISSO'
   CONSTRAINT fk_bloqueio_fisio FOREIGN KEY (fk_fisioterapeuta) REFERENCES fisioterapeuta(id_fisioterapeuta)
 );
+
 -- -----------------------------------------------------
 -- Tabela: clinica
 -- -----------------------------------------------------
