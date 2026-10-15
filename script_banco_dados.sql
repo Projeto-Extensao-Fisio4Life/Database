@@ -33,6 +33,7 @@ CREATE TABLE IF NOT EXISTS usuario (
   fk_contato INT NOT NULL, -- Foreign key para vincular contato
   nome VARCHAR(255) NOT NULL, -- Nome completo do usuário
   data_nascimento DATE NOT NULL, -- Data de nascimento
+  email VARCHAR(45) NOT NULL UNIQUE, -- Endereço digital
   senha VARCHAR(60) NOT NULL, -- Senha de acesso
   tipo_usuario VARCHAR(45) NOT NULL, -- Tipo de usuário (permissões)
   data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de cadastro
@@ -62,6 +63,20 @@ CREATE TABLE IF NOT EXISTS fisioterapeuta (
   especialidade VARCHAR(45) NOT NULL, -- Especialidade técnica
   cnpj CHAR(14) NOT NULL UNIQUE, -- CNPJ
   CONSTRAINT fk_fisioterapeuta_usuario FOREIGN KEY (fk_usuario) REFERENCES usuario (id_usuario)
+);
+
+-- -----------------------------------------------------
+-- Tabela: agenda_fisioterapeuta
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS agenda_fisioterapeuta (
+  id_agenda_fisioterapeuta INT PRIMARY KEY AUTO_INCREMENT, -- Identificador único do registro
+  fk_fisioterapeuta INT NOT NULL UNIQUE, -- Referência à tabela de fisioterapeuta
+  data_agenda DATE NOT NULL, -- Data que acontecerá a sessão
+  hora_inicio TIME NOT NULL, -- Horário de início
+  hora_fim TIME NOT NULL, -- Horário de término
+  status_agenda TINYINT NOT NULL, -- Status do agendamento
+  data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, -- Data do cadastro
+  CONSTRAINT fk_fisioterapeuta_agenda FOREIGN KEY (fk_fisioterapeuta) REFERENCES fisioterapeuta (id_fisioterapeuta)
 );
 
 -- -----------------------------------------------------
