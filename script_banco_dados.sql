@@ -66,47 +66,6 @@ CREATE TABLE IF NOT EXISTS fisioterapeuta (
 );
 
 -- -----------------------------------------------------
--- Tabela: agenda_fisioterapeuta
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS agenda_fisioterapeuta (
-  id_agenda_fisioterapeuta INT PRIMARY KEY AUTO_INCREMENT, -- Identificador único do registro
-  fk_fisioterapeuta INT NOT NULL UNIQUE, -- Referência à tabela de fisioterapeuta
-  data_agenda DATE NOT NULL, -- Data que acontecerá a sessão
-  hora_inicio TIME NOT NULL, -- Horário de início
-  hora_fim TIME NOT NULL, -- Horário de término
-  status_agenda TINYINT NOT NULL, -- Status do agendamento
-  data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, -- Data do cadastro
-  CONSTRAINT fk_fisioterapeuta_agenda FOREIGN KEY (fk_fisioterapeuta) REFERENCES fisioterapeuta (id_fisioterapeuta)
-);
-
--- -----------------------------------------------------
--- Tabela: disponibilidade_fisioterapeuta
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS disponibilidade_fisioterapeuta (
-  id_disponibilidade INT PRIMARY KEY AUTO_INCREMENT, -- Identificador único do registro
-  fk_fisioterapeuta INT NOT NULL,  -- Foreign key para vincular fisioterapeuta
-  fk_clinica INT NOT NULL,  -- Foreign key para vincular clinica
-  data_disponivel DATE NOT NULL, -- Data que estará disponivel para agendamento
-  hora_inicio TIME NOT NULL, -- Horário de início
-  hora_fim TIME NOT NULL, -- Horário de fim
-  CONSTRAINT fk_disp_fisio FOREIGN KEY (fk_fisioterapeuta) REFERENCES fisioterapeuta(id_fisioterapeuta),
-  CONSTRAINT fk_disp_clinica FOREIGN KEY (fk_clinica) REFERENCES clinica(id_clinica)
-);
-
--- -----------------------------------------------------
--- Tabela: bloqueio_agenda
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS bloqueio_agenda (
-  id_bloqueio INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único do registro
-  fk_fisioterapeuta INT NOT NULL, -- Foreign key para vincular fisioterapeuta
-  data_inicio TIMESTAMP NOT NULL, -- Horário de início
-  data_fim TIMESTAMP NOT NULL, -- Horário de fim
-  dia_inteiro TINYINT NOT NULL DEFAULT 1, -- 1 = Sim, 0 = Não
-  tipo_bloqueio VARCHAR(45) NOT NULL,    -- Ex: 'FOLGA', 'FERIAS', 'COMPROMISSO'
-  CONSTRAINT fk_bloqueio_fisio FOREIGN KEY (fk_fisioterapeuta) REFERENCES fisioterapeuta(id_fisioterapeuta)
-);
-
--- -----------------------------------------------------
 -- Tabela: clinica
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS clinica (
@@ -120,6 +79,37 @@ CREATE TABLE IF NOT EXISTS clinica (
 );
 
 -- -----------------------------------------------------
+-- Tabela: agenda_fisioterapeuta
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS agenda_fisioterapeuta (
+  id_agenda_fisioterapeuta INT PRIMARY KEY AUTO_INCREMENT, -- Identificador único do registro
+  fk_fisioterapeuta INT NOT NULL, -- Referência à tabela de fisioterapeuta
+  fk_clinica INT NOT NULL, -- Referência à tabela de clinica
+  data_agenda DATE NOT NULL, -- Data que acontecerá a sessão
+  hora_inicio TIME NOT NULL, -- Horário de início
+  hora_fim TIME NOT NULL, -- Horário de término
+  status_agenda TINYINT NOT NULL, -- Status do agendamento
+  data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, -- Data do cadastro
+  CONSTRAINT fk_fisioterapeuta_agenda FOREIGN KEY (fk_fisioterapeuta) REFERENCES fisioterapeuta (id_fisioterapeuta),
+  CONSTRAINT fk_clinica_agenda FOREIGN KEY (fk_clinica) REFERENCES clinica (id_clinica)
+);
+
+-- -----------------------------------------------------
+-- Tabela: bloqueio_agenda
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS bloqueio_agenda (
+  id_bloqueio INT PRIMARY KEY AUTO_INCREMENT,  -- Identificador único do registro
+  fk_fisioterapeuta INT NOT NULL, -- Foreign key para vincular fisioterapeuta
+  fk_clinica INT NOT NULL, -- Referência à tabela de clinica
+  data_inicio TIMESTAMP NOT NULL, -- Horário de início
+  data_fim TIMESTAMP NOT NULL, -- Horário de fim
+  dia_inteiro TINYINT NOT NULL DEFAULT 1, -- 1 = Sim, 0 = Não
+  tipo_bloqueio VARCHAR(45) NOT NULL,    -- Ex: 'FOLGA', 'FERIAS', 'COMPROMISSO'
+  CONSTRAINT fk_bloqueio_fisio FOREIGN KEY (fk_fisioterapeuta) REFERENCES fisioterapeuta(id_fisioterapeuta),
+  CONSTRAINT fk_clinica_bloqueio FOREIGN KEY (fk_clinica) REFERENCES clinica (id_clinica)
+);
+
+-- -----------------------------------------------------
 -- Tabela: agendamento
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS agendamento (
@@ -127,13 +117,9 @@ CREATE TABLE IF NOT EXISTS agendamento (
   fk_clinica INT NOT NULL, -- Foreign key para vincular clinica
   fk_fisioterapeuta INT NOT NULL, -- Foreign key para vincular fisioterapeuta
   fk_paciente INT NOT NULL, -- Foreign key para vincular paciente
-  data_agendamento DATE NOT NULL, -- Data do agendamento
-  hora_inicio TIME NOT NULL, -- Horário de início
-  hora_fim TIME NOT NULL, -- Horário de término
   tipo_atendimento VARCHAR(20) NOT NULL, -- Ex: avulsa , pacote, recovery
   status_agendamento TINYINT NOT NULL, -- Status do agendamento
   observacao VARCHAR(255) NULL, -- Informações complementares
-  CONSTRAINT fk_agendamento_clinica FOREIGN KEY (fk_clinica) REFERENCES clinica (id_clinica),
   CONSTRAINT fk_agendamento_fisioterapeuta FOREIGN KEY (fk_fisioterapeuta) REFERENCES fisioterapeuta (id_fisioterapeuta),
   CONSTRAINT fk_agendamento_paciente FOREIGN KEY (fk_paciente) REFERENCES paciente (id_paciente)
 );
