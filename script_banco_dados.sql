@@ -33,7 +33,6 @@ CREATE TABLE IF NOT EXISTS usuario (
   fk_contato INT NOT NULL, -- Foreign key para vincular contato
   nome VARCHAR(255) NOT NULL, -- Nome completo do usuário
   data_nascimento DATE NOT NULL, -- Data de nascimento
-  email VARCHAR(45) NOT NULL UNIQUE, -- Endereço digital
   senha VARCHAR(60) NOT NULL, -- Senha de acesso
   tipo_usuario VARCHAR(45) NOT NULL, -- Tipo de usuário (permissões)
   data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de cadastro
