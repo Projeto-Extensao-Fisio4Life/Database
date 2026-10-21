@@ -15,24 +15,16 @@ CREATE TABLE IF NOT EXISTS endereco (
 );
 
 -- -----------------------------------------------------
--- Tabela: contato
--- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS contato (
-  id_contato INT PRIMARY KEY AUTO_INCREMENT, -- Identificador único do registro
-  telefone CHAR(14) NOT NULL, -- Número de telefone
-  celular CHAR(14) NOT NULL, -- Número do celular
-  email VARCHAR(45) NOT NULL -- Endereço digital
-);
-
--- -----------------------------------------------------
 -- Tabela: usuario
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS usuario (
   id_usuario INT PRIMARY KEY AUTO_INCREMENT, -- Identificador único do registro
   fk_endereco INT NOT NULL, -- Foreign key para vincular endereço
-  fk_contato INT NOT NULL, -- Foreign key para vincular contato
   nome VARCHAR(255) NOT NULL, -- Nome completo do usuário
   data_nascimento DATE NOT NULL, -- Data de nascimento
+  telefone CHAR(14), -- Número de telefone
+  celular CHAR(14) NOT NULL, -- Número do celular
+  email VARCHAR(45) NOT NULL, -- Endereço digital
   senha VARCHAR(60) NOT NULL, -- Senha de acesso
   tipo_usuario VARCHAR(45) NOT NULL, -- Tipo de usuário (permissões)
   data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de cadastro
@@ -49,6 +41,7 @@ CREATE TABLE IF NOT EXISTS paciente (
   fk_usuario INT NOT NULL UNIQUE, -- Foreign key para vincular usuario
   cpf CHAR(11) NOT NULL UNIQUE, -- Cadastro de Pessoa Fisica (CPF)
   permite_atendimento_grupo TINYINT NOT NULL, -- Permite atendimento individual ou em grupo
+  crefito_fisioterapeuta CHAR(10), -- Identificar o fisioterapeuar que o usuário tem preferência 
   CONSTRAINT fk_paciente_usuario FOREIGN KEY (fk_usuario) REFERENCES usuario (id_usuario)
 );
 
@@ -69,10 +62,12 @@ CREATE TABLE IF NOT EXISTS fisioterapeuta (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS clinica (
   id_clinica INT PRIMARY KEY AUTO_INCREMENT, -- Identificador único do registro
-  fk_contato INT NOT NULL, -- Foreign key para vincular contato
   fk_endereco INT NOT NULL UNIQUE, -- Foreign key para vincular endereco
   nome VARCHAR(255) NOT NULL, -- Nome da clínica
   cnpj CHAR(14) NOT NULL UNIQUE, -- Cadastro Nacional da Pessoa Jurídica (CNPJ)
+  telefone CHAR(14), -- Número de telefone
+  celular CHAR(14) NOT NULL, -- Número do celular
+  email VARCHAR(45) NOT NULL, -- Endereço digital
   CONSTRAINT fk_clinica_contato FOREIGN KEY (fk_contato) REFERENCES contato (id_contato),
   CONSTRAINT fk_clinica_endereco FOREIGN KEY (fk_endereco) REFERENCES endereco (id_endereco)
 );
@@ -128,6 +123,7 @@ CREATE TABLE IF NOT EXISTS agendamento (
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS servico (
   id_servico INT PRIMARY KEY AUTO_INCREMENT, -- Identificador único do registro
+  valor DECIMAL(10,2) NOT NULL, -- Valor cobrado pelo serviço
   nome VARCHAR(45) NOT NULL, -- Nome do serviço
   quantidade_sessoes INT NOT NULL, -- Quantidade de sessões do pacote/serviço
   tipo VARCHAR(20) NOT NULL, -- Categoria ou modalidade do serviço (ex.: ortopedia)
@@ -181,9 +177,9 @@ CREATE TABLE IF NOT EXISTS pagamento (
     id_pagamento INT PRIMARY KEY AUTO_INCREMENT, -- Identificador único do registro
     fk_paciente INT, -- Foreign key para vincular paciente
     fk_servico INT, -- Foreign key para vincular servico
-    valor DECIMAL(10,2), -- Valor cobrado pelo serviço
-    forma_pagamento VARCHAR(45), -- Meio utilizado para realizar o pagamento
-    status_pagamento TINYINT, -- Situação atual do pagamento
+    valor DECIMAL(10,2) NOT NULL, -- Valor cobrado pelo serviço
+    forma_pagamento VARCHAR(45) NOT NULL, -- Meio utilizado para realizar o pagamento
+    status_pagamento TINYINT NOT NULL, -- Situação atual do pagamento
     data_concluida TIMESTAMP NOT NULL, -- Data em que o pagamento foi concluído
     CONSTRAINT fk_pagamento_paciente FOREIGN KEY (fk_paciente) REFERENCES paciente(id_paciente),
     CONSTRAINT fk_pagamento_servico FOREIGN KEY (fk_servico) REFERENCES servico(id_servico)
