@@ -29,8 +29,7 @@ CREATE TABLE IF NOT EXISTS usuario (
   tipo_usuario VARCHAR(45) NOT NULL, -- Tipo de usuário (permissões)
   data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de cadastro
   status_usuario TINYINT NOT NULL, -- Indica se está ativo ou inativo
-  CONSTRAINT fk_usuario_endereco FOREIGN KEY (fk_endereco) REFERENCES endereco (id_endereco),
-  CONSTRAINT fk_usuario_contato FOREIGN KEY (fk_contato) REFERENCES contato (id_contato)
+  CONSTRAINT fk_usuario_endereco FOREIGN KEY (fk_endereco) REFERENCES endereco (id_endereco)
 );
 
 -- -----------------------------------------------------
@@ -68,7 +67,6 @@ CREATE TABLE IF NOT EXISTS clinica (
   telefone CHAR(14), -- Número de telefone
   celular CHAR(14) NOT NULL, -- Número do celular
   email VARCHAR(45) NOT NULL, -- Endereço digital
-  CONSTRAINT fk_clinica_contato FOREIGN KEY (fk_contato) REFERENCES contato (id_contato),
   CONSTRAINT fk_clinica_endereco FOREIGN KEY (fk_endereco) REFERENCES endereco (id_endereco)
 );
 
