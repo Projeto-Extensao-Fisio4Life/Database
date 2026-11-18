@@ -29,7 +29,8 @@ CREATE TABLE IF NOT EXISTS usuario (
   tipo_usuario VARCHAR(45) NOT NULL, -- Tipo de usuário (permissões)
   data_cadastro TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de cadastro
   status_usuario TINYINT NOT NULL, -- Indica se está ativo ou inativo
-  CONSTRAINT fk_usuario_endereco FOREIGN KEY (fk_endereco) REFERENCES endereco (id_endereco)
+  CONSTRAINT fk_usuario_endereco FOREIGN KEY (fk_endereco) REFERENCES endereco (id_endereco),
+  CONSTRAINT chk_tipo_usuario CHECK(tipo_usuario IN ('ADMIN', 'FISIOTERAPEUTA', 'DONO', 'COMUM'))
 );
 
 -- -----------------------------------------------------
@@ -149,9 +150,10 @@ CREATE TABLE IF NOT EXISTS prontuario (
   id_prontuario INT PRIMARY KEY AUTO_INCREMENT, -- Identificador único do registro
   fk_paciente INT NOT NULL UNIQUE, -- Foreign key para vincular paciente
   data_abertura TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- Data de abertura
-  status_prontuario TINYINT NOT NULL, -- Status do prontuário
+  status_prontuario VARCHAR(30) NOT NULL, -- Status do prontuário: "CONCLUIDO", "EM ANDAMENTO", "SUSPENSO", "CANCELADO"
   observacao_inicial VARCHAR(255) NULL, -- Informações complementares
-  CONSTRAINT fk_prontuario_paciente FOREIGN KEY (fk_paciente) REFERENCES paciente (id_paciente)
+  CONSTRAINT fk_prontuario_paciente FOREIGN KEY (fk_paciente) REFERENCES paciente (id_paciente),
+  CONSTRAINT chk_status_prontuario CHECK(status_prontuario IN ('CONCLUIDO', 'EM ANDAMENTO', 'SUSPENSO', 'CANCELADO'))
 );
 
 -- -----------------------------------------------------
