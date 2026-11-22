@@ -139,6 +139,8 @@ CREATE TABLE IF NOT EXISTS sessao (
   data_sessao TIMESTAMP NOT NULL, -- Data e hora da sessão
   descricao VARCHAR(255) NOT NULL, -- Descrição das atividades realizadas
   observacao VARCHAR(255) NOT NULL, -- Observações da sessão
+  status_sessao TINYINT NOT NULL, -- Idetificar se a sessão foi: 'REALIZADA', 'CANCELADA'
+  gera_cobranca TINYINT NOT NULL, -- Identificar se irá gerar cobrança
   CONSTRAINT fk_sessao_agendamento FOREIGN KEY (fk_agendamento) REFERENCES agendamento (id_agendamento),
   CONSTRAINT fk_sessao_servico FOREIGN KEY (fk_servico) REFERENCES servico (id_servico)
 );
