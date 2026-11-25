@@ -130,6 +130,20 @@ CREATE TABLE IF NOT EXISTS servico (
 );
 
 -- -----------------------------------------------------
+-- Tabela: servico_contratato
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS servico_contratado (
+	id_servico_contratado INT PRIMARY KEY AUTO_INCREMENT, -- Identificar único do registro
+    fk_paciente INT NOT NULL, -- Identificar qual paciente contratou
+    fk_servico INT NOT NULL, -- Idetificar o servico contratado
+    data_hora TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL, -- Identificar a data e hora que o servico foi contratato
+    status_servico VARCHAR(20) NOT NULL, -- Identificar o status como: 'CONCLUÍDO', 'EM ANDAMENTO', 'CANCELADO'
+    observacao VARCHAR(255), -- Informações complementares
+    CONSTRAINT fk_paciente_serv_contratado FOREIGN KEY (fk_paciente) REFERENCES paciente (id_paciente),
+    CONSTRAINT fk_servico_serv_contratado FOREIGN KEY (fk_servico) REFERENCES servico (id_servico)
+);
+
+-- -----------------------------------------------------
 -- Tabela: sessao
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS sessao (
@@ -138,11 +152,11 @@ CREATE TABLE IF NOT EXISTS sessao (
   fk_servico INT NOT NULL, -- Serviço realizado na sessão
   data_sessao TIMESTAMP NOT NULL, -- Data e hora da sessão
   descricao VARCHAR(255) NOT NULL, -- Descrição das atividades realizadas
-  observacao VARCHAR(255) NOT NULL, -- Observações da sessão
-  status_sessao TINYINT NOT NULL, -- Idetificar se a sessão foi: 'REALIZADA', 'CANCELADA'
-  gera_cobranca TINYINT NOT NULL, -- Identificar se irá gerar cobrança
+  status_sessao VARCHAR(20) NOT NULL, -- Idetificar se a sessão: 'CANCELADA', 'REALIZADA', 'FALTA'
+  gera_cobranca TINYINT NOT NULL, -- Identificar se irá gerar cobrança: 1: 0: 'NÃO', 'SIM'
   CONSTRAINT fk_sessao_agendamento FOREIGN KEY (fk_agendamento) REFERENCES agendamento (id_agendamento),
-  CONSTRAINT fk_sessao_servico FOREIGN KEY (fk_servico) REFERENCES servico (id_servico)
+  CONSTRAINT fk_sessao_servico FOREIGN KEY (fk_servico) REFERENCES servico (id_servico),
+  CONSTRAINT chk_sessao_status CHECK(status_sessao IN ('CANCELADA', 'REALIZADA', 'FALTA'))
 );
 
 -- -----------------------------------------------------
@@ -182,9 +196,7 @@ CREATE TABLE IF NOT EXISTS pagamento (
     valor DECIMAL(10,2) NOT NULL, -- Valor cobrado pelo serviço
     forma_pagamento VARCHAR(45) NOT NULL, -- Meio utilizado para realizar o pagamento
     status_pagamento TINYINT NOT NULL, -- Situação atual do pagamento
-    data_concluida TIMESTAMP NOT NULL, -- Data em que o pagamento foi concluído
-    CONSTRAINT fk_pagamento_paciente FOREIGN KEY (fk_paciente) REFERENCES paciente(id_paciente),
-    CONSTRAINT fk_pagamento_servico FOREIGN KEY (fk_servico) REFERENCES servico(id_servico)
+    data_concluida TIMESTAMP NOT NULL -- Data em que o pagamento foi concluído
 );
 
 -- -----------------------------------------------------
